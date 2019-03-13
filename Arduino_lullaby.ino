@@ -1,9 +1,7 @@
 #include <Tone.h>
 
-
 // We need a Tone
 Tone speaker;
-
 
 // Redefinition of useful notes
 int ff = NOTE_F6;
@@ -24,19 +22,16 @@ int A  = NOTE_A4;
 int G  = NOTE_G4;
 int F  = NOTE_F4;
 
-
 // Silent note (pause)
 int p = 0;
 
-
 // System variables
-int micIn = 0; // Microphone input pin
+int micIn = 0;      // Microphone input pin
 int speakerOut = 9; // Speaker is on PWM output (digital 9, 10 or 11)
-int ledPin = 12; // LED output pin
-int potar = 1; // Potentiometer input for trigger level
-int noise = 0; // Sound level from microphone
-int trigger = 0; // Trigger level
-
+int ledPin = 12;    // LED output pin
+int potar = 1;      // Potentiometer input for trigger level
+int noise = 0;      // Sound level from microphone
+int trigger = 0;    // Trigger level
 
 // Each phrase consists of an array of notes (as defined above) and an array of beats
 // Whole note = 16
@@ -72,12 +67,11 @@ float melody_7_beats[] = { 4, 4+2, 2, 2, 2, 2, 2, 4+2, 2,  8, 4, 4, 4, 2, 2, 4+2
 int zeend[]       = { B_, c, d,   f, d,  b_, a,   g, dd,  cc, dd, dd, cc, ff, dd, dd, cc, B_, B_, d, f, g,  b_,  b_,  p };
 float end_beats[] = {  2, 2, 2, 2+2, 2, 4+2, 2, 4+2,  2, 4+2,  2,  2,  2,  2,  2,  2,  2,  2,  2, 2, 2, 2, 2+1, 1+4, 16 };
 
-
 // Set tempo
 float tempo = 78;
 float time = 60./tempo*1000./4;
 
-
+// Play a note
 void playNote(int tone_, float duration) {
 
   duration *= time;
@@ -96,6 +90,7 @@ void playNote(int tone_, float duration) {
 
 }
 
+
 // Play a single phrase
 void playPhrase(int phrase[], float beats[], int zesize) {
 
@@ -109,7 +104,7 @@ void playPhrase(int phrase[], float beats[], int zesize) {
 }
 
 
-// Main melody
+// Main the whole melody
 void playMelody() {
 
   playPhrase(intro, intro_beats, sizeof(intro));
@@ -135,6 +130,7 @@ void playMelody() {
   return;
 }
 
+
 // Setup fonction
 void setup() {
   
@@ -146,19 +142,24 @@ void setup() {
 
 }
 
-// Loop function
+
+// Loop function, runs forever
 void loop() {
 
+  // read noise level from a microphone
   noise = analogRead(micIn);
+
+  // read trigger level from a potentiometer
   trigger = analogRead(potar);
+
+  // does the baby cry ?
   if (noise >= trigger/5) {
-//    Serial.println(noise); // For debugging
-//    Serial.println(trigger);
-//    Serial.println("---");
     digitalWrite(ledPin, HIGH);
     playMelody();
     digitalWrite(ledPin, LOW);
   }
+
+  // give the Arduino some rest
   delay(100);
 
 }
